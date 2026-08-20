@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-import joblib
+from sklearn.linear_model import LinearRegression
 
 # --------------------------------------------------
 # PAGE SETTINGS
@@ -132,10 +132,41 @@ div.stButton > button:hover {
 """, unsafe_allow_html=True)
 
 # --------------------------------------------------
-# LOAD BEST MODEL
+# LOAD DATASET
 # --------------------------------------------------
 
-model = joblib.load("best_house_price_model.pkl")
+df = pd.read_csv("house price.csv")
+
+# --------------------------------------------------
+# SELECT FEATURES
+# --------------------------------------------------
+
+df = df[
+    [
+        "OverallQual",
+        "GrLivArea",
+        "GarageCars",
+        "TotalBsmtSF",
+        "FullBath",
+        "YearBuilt",
+        "BedroomAbvGr",
+        "SalePrice"
+    ]
+]
+
+# --------------------------------------------------
+# FEATURES AND TARGET
+# --------------------------------------------------
+
+X = df.drop("SalePrice", axis=1)
+y = df["SalePrice"]
+
+# --------------------------------------------------
+# TRAIN MODEL
+# --------------------------------------------------
+
+model = LinearRegression()
+model.fit(X, y)
 
 # --------------------------------------------------
 # HEADER
@@ -147,7 +178,7 @@ st.markdown(
 )
 
 st.markdown(
-    '<div class="subtitle">Predict house prices using Gradient Boosting Regressor</div>',
+    '<div class="subtitle">Predict house prices using Linear Regression</div>',
     unsafe_allow_html=True
 )
 
@@ -243,6 +274,7 @@ if st.button("🔮 Predict House Price"):
 
     price = prediction[0]
 
+    # NO HTML USED FOR PREDICTION RESULT
     st.subheader("Estimated House Price")
     st.success(f"${price:,.2f}")
 
@@ -251,6 +283,6 @@ if st.button("🔮 Predict House Price"):
 # --------------------------------------------------
 
 st.markdown(
-    '<div class="footer">Powered by Gradient Boosting Regressor • House Price Prediction</div>',
+    '<div class="footer">Powered by Linear Regression • House Price Prediction</div>',
     unsafe_allow_html=True
 )
